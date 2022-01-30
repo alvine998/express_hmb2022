@@ -41,6 +41,8 @@ global.__basedir = __dirname;
 
 // Require Notes routes
 require('./app/routes/user.routes.js')(app);
+require('./app/routes/kandidat.routes.js')(app);
+require('./app/routes/vote.routes.js')(app);
 
 
 const dirname = path.resolve();

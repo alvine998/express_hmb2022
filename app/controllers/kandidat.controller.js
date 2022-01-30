@@ -1,19 +1,19 @@
-const Users = require('../models/user.model.js');
-const bcrypt = require('bcryptjs');
+const Kandidat = require('../models/kandidat.model.js');
 
 // Create and Save a new Note
 exports.create = (req, res) => {
     // Create a Note
-    const users = new Users({
+    const kandidat = new Kandidat({
         nama: req.body.nama,
-        username: req.body.username,
-        password: req.body.password,
-        status_user: req.body.status_user || '1',
-        keterangan: req.body.keterangan || 'belum memilih',
+        foto: req.body.foto,
+        keterangan: req.body.keterangan,
+        visi: req.body.visi,
+        misi: req.body.misi,
+        jumlah_suara: req.body.jumlah_suara || '0',
     });
 
     // Save Note in the database
-    users.save()
+    kandidat.save()
         .then(data => {
             res.send(data);
         }).catch(err => {
@@ -27,11 +27,11 @@ exports.search = async (req, res) => {
     try {
         const searchParams = req.query
         console.log(searchParams)
-        const users = await Users.find(searchParams)
-        if (!users) {
+        const kandidat = await Kandidat.find(searchParams)
+        if (!kandidat) {
             throw Error('error, not found')
         } else {
-            res.status(200).json(users)
+            res.status(200).json(kandidat)
         }
     } catch (err) {
         res.status(400).json({ msg: err })
@@ -39,14 +39,14 @@ exports.search = async (req, res) => {
 }
 
 exports.onLogin = (req, res) => {
-    Users.findOne({ username: req.body.username })
-        .then(users => {
-            if (!users) {
+    Kandidat.findOne({ username: req.body.username })
+        .then(kandidat => {
+            if (!kandidat) {
                 return res.status(404).send({
                     message: "User not found with email "
                 });
             } else {
-                bcrypt.compare(req.body.password, users.password, (err, result) => {
+                bcrypt.compare(req.body.password, kandidat.password, (err, result) => {
                     if (result == true) {
                         res.status(200).send({ Success: "Login Ok" })
                     } else {
@@ -59,9 +59,9 @@ exports.onLogin = (req, res) => {
 
 // Retrieve and return all notes from the database.
 exports.findAll = (req, res) => {
-    Users.find()
-        .then(userss => {
-            res.send(userss);
+    Kandidat.find()
+        .then(kandidats => {
+            res.send(kandidats);
         }).catch(err => {
             res.status(500).send({
                 message: err.message || "Some error occurred while retrieving notes."
@@ -72,46 +72,46 @@ exports.findAll = (req, res) => {
 // Update a note identified by the noteId in the request
 exports.update = (req, res) => {
     // Find note and update it with the request body
-    Users.findByIdAndUpdate(req.params.usersId,
+    Kandidat.findByIdAndUpdate(req.params.kandidatId,
         req.body
         , { new: true })
-        .then(users => {
-            if (!users) {
+        .then(kandidat => {
+            if (!kandidat) {
                 return res.status(404).send({
-                    message: "users not found with id " + req.params.usersId
+                    message: "kandidat not found with id " + req.params.kandidatId
                 });
             }
-            res.send(users);
+            res.send(kandidat);
         }).catch(err => {
             if (err.kind === 'ObjectId') {
                 return res.status(404).send({
-                    message: "users not found with id " + req.params.usersId
+                    message: "kandidat not found with id " + req.params.kandidatId
                 });
             }
             return res.status(500).send({
-                message: "Error updating users with id " + req.params.usersId
+                message: "Error updating kandidat with id " + req.params.kandidatId
             });
         });
 };
 
 // Find a single note with a noteId
 exports.findOne = (req, res) => {
-    Users.findById(req.params.usersId)
+    Kandidat.findById(req.params.kandidatId)
         .then(user => {
             if (!user) {
                 return res.status(404).send({
-                    message: "users not found with id " + req.params.usersId
+                    message: "kandidat not found with id " + req.params.kandidatId
                 });
             }
             res.send(user);
         }).catch(err => {
             if (err.kind === 'ObjectId') {
                 return res.status(404).send({
-                    message: "users not found with id " + req.params.usersId
+                    message: "kandidat not found with id " + req.params.kandidatId
                 });
             }
             return res.status(500).send({
-                message: "Error retrieving users with id " + req.params.usersId
+                message: "Error retrieving kandidat with id " + req.params.kandidatId
             });
         });
 };
@@ -119,44 +119,44 @@ exports.findOne = (req, res) => {
 // Find a single note with a noteId
 exports.findOneEmail = (req, res) => {
     const username = req.params.username;
-    Users.findOne({ "email": username })
-        .then(users => {
-            if (!users) {
+    Kandidat.findOne({ "email": username })
+        .then(kandidat => {
+            if (!kandidat) {
                 return res.status(404).send({
                     message: "Email not found with id " + req.params.username
                 });
             }
-            res.send(users);
+            res.send(kandidat);
         }).catch(err => {
             if (err.kind === 'ObjectId') {
                 return res.status(404).send({
-                    message: "users not found with id " + req.params.username
+                    message: "kandidat not found with id " + req.params.username
                 });
             }
             return res.status(500).send({
-                message: "Error retrieving users with id " + req.params.username
+                message: "Error retrieving kandidat with id " + req.params.username
             });
         });
 };
 
 // Delete a note with the specified noteId in the request
 exports.delete = (req, res) => {
-    Users.findByIdAndRemove(req.params.usersId)
-        .then(users => {
-            if (!users) {
+    Kandidat.findByIdAndRemove(req.params.kandidatId)
+        .then(kandidat => {
+            if (!kandidat) {
                 return res.status(404).send({
-                    message: "users not found with id " + req.params.usersId
+                    message: "kandidat not found with id " + req.params.kandidatId
                 });
             }
-            res.send({ message: "users deleted successfully!" });
+            res.send({ message: "kandidat deleted successfully!" });
         }).catch(err => {
             if (err.kind === 'ObjectId' || err.name === 'NotFound') {
                 return res.status(404).send({
-                    message: "users not found with id " + req.params.usersId
+                    message: "kandidat not found with id " + req.params.kandidatId
                 });
             }
             return res.status(500).send({
-                message: "Could not delete users with id " + req.params.usersId
+                message: "Could not delete kandidat with id " + req.params.kandidatId
             });
         });
 };
