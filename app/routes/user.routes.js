@@ -11,12 +11,15 @@ module.exports = (app) => {
     // Retrieve all users
     app.get('/users', users.findAll);
 
+    // Retrieve all users belum milih
+    app.get('/users/novotes', users.findNot);
+
     // Searching by name
     app.get('/search', cors(), users.search)
 
     // Retrieve all users
     app.get('/users/:usersId', users.findOne);
-    app.get('/users/mail/:emails', users.findOneEmail);
+    app.get('/users/usr/:username', users.findOneEmail);
 
 
     // Delete Chat

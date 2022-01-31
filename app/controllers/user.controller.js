@@ -38,21 +38,42 @@ exports.search = async (req, res) => {
     }
 }
 
+exports.findNot = (req, res) => {
+    Users.find({ status_user: 1 }).then(
+        users => {
+            res.send(users)
+        }
+    ).catch(err => {
+        res.status(500).send({
+            message: err.message || "Some error occurred while retrieving notes."
+        });
+    });
+}
 exports.onLogin = (req, res) => {
     Users.findOne({ username: req.body.username })
-        .then(users => {
-            if (!users) {
+        .then(userss => {
+            if (!userss) {
                 return res.status(404).send({
                     message: "User not found with email "
                 });
             } else {
-                bcrypt.compare(req.body.password, users.password, (err, result) => {
-                    if (result == true) {
-                        res.status(200).send({ Success: "Login Ok" })
-                    } else {
-                        res.status(500).send({ Failed: "Email or Password Wrong" })
-                    }
-                })
+                if (req.body.password == userss.password) {
+                    return res.status(200).send({
+                        message: "Login Ok"
+                    });
+                } else {
+                    return res.status(500).send({
+                        message: "Username atau Password Salah"
+                    });
+                }
+
+                //  req.body.password,(err, result) => {
+                //     if (result == true) {
+                //         res.status(200).send({ Success: "Login Ok" })
+                //     } else {
+                //         res.status(500).send({ Failed: "Email or Password Wrong" })
+                //     }
+                // }
             }
         })
 }
@@ -119,7 +140,7 @@ exports.findOne = (req, res) => {
 // Find a single note with a noteId
 exports.findOneEmail = (req, res) => {
     const username = req.params.username;
-    Users.findOne({ "email": username })
+    Users.findOne({ "username": username })
         .then(users => {
             if (!users) {
                 return res.status(404).send({
