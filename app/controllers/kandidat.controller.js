@@ -9,7 +9,7 @@ exports.create = (req, res) => {
         keterangan: req.body.keterangan,
         visi: req.body.visi,
         misi: req.body.misi,
-        jumlah_suara: req.body.jumlah_suara || '0',
+        jumlah_suara: req.body.jumlah_suara || 0,
     });
 
     // Save Note in the database

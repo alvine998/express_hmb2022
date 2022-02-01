@@ -6,7 +6,7 @@ const KandidatSchema = mongoose.Schema({
     keterangan: String,
     visi: String,
     misi:String,
-    jumlah_suara: String,
+    jumlah_suara: Number,
     }, {
     timestamps: true
 });
